@@ -8,10 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Configura multer para subir archivos a carpeta 'uploads'
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');  // crea esta carpeta en tu proyecto backend
+    cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -19,7 +19,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Ruta para subir imagen
 app.post('/images', upload.single('image'), async (req, res) => {
   try {
     const file = req.file;
@@ -35,7 +34,6 @@ app.post('/images', upload.single('image'), async (req, res) => {
   }
 });
 
-// Ruta para listar imágenes
 app.get('/images', async (req, res) => {
   try {
     const images = await db.Image.findAll();
@@ -45,10 +43,14 @@ app.get('/images', async (req, res) => {
   }
 });
 
-// Servir archivos estáticos en /uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.get('/api/healthcheck', (req, res) => {
+  res.json({ status: 'OK', message: 'API está funcionando' });
+});
+
