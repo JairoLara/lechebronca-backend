@@ -9,17 +9,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nombre: {
+      filename: {
         type: Sequelize.STRING,
         allowNull: false
-      },
+  },
       filepath: {
         type: Sequelize.STRING,
         allowNull: false
       },
       fechaPublicacion: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: false
       },
       createdAt: {
         allowNull: false,

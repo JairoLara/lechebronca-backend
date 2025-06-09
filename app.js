@@ -8,10 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 
-app.use(express.urlencoded({ extended: true }));
-
-// multer
+// Almacenar archivos
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -22,19 +19,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// subir imagen
+// Subir imagen
 app.post('/images', upload.single('image'), async (req, res) => {
   try {
     const file = req.file;
-    if (!file) return res.status(400).json({ message: 'No file uploaded' });
+    const { filename, fechaPublicacion } = req.body;
 
-    const { nombre, fechaPublicacion } = req.body;
+    if (!file || !filename || !fechaPublicacion) {
+    return res.status(400).json({ message: 'Faltan datos: imagen, nombre o fecha de publicación.' });
+    }
 
-    const image = await db.Image.create({
-      nombre,
-      filepath: `/uploads/${file.filename}`,
-      fechaPublicacion
-    });
+  const image = await db.Image.create({
+  filename,
+  filepath: `/uploads/${file.filename}`,
+  fechaPublicacion: parseInt(fechaPublicacion, 10)
+});
 
     res.json(image);
   } catch (error) {
@@ -42,7 +41,7 @@ app.post('/images', upload.single('image'), async (req, res) => {
   }
 });
 
-// Obtener todas las imagenes
+// Obtener imágenes
 app.get('/images', async (req, res) => {
   try {
     const images = await db.Image.findAll();
@@ -52,15 +51,14 @@ app.get('/images', async (req, res) => {
   }
 });
 
-// usar archivos estaticos
+// Ruta para acceder a los archivos subidos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ver si esta corriendo
+// Ruta de prueba
 app.get('/api/healthcheck', (req, res) => {
-  res.json({ status: 'OK', message: 'API está funcionando' });
+  res.json({ status: 'OK', message: 'API esta funcionando' });
 });
 
-// Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
