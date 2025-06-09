@@ -8,7 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// 
+app.use(express.urlencoded({ extended: true }));
 
+// multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -19,21 +22,27 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// subir imagen
 app.post('/images', upload.single('image'), async (req, res) => {
   try {
     const file = req.file;
     if (!file) return res.status(400).json({ message: 'No file uploaded' });
 
+    const { nombre, fechaPublicacion } = req.body;
+
     const image = await db.Image.create({
-      filename: file.filename,
-      filepath: `/uploads/${file.filename}`
+      nombre,
+      filepath: `/uploads/${file.filename}`,
+      fechaPublicacion
     });
+
     res.json(image);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+// Obtener todas las imagenes
 app.get('/images', async (req, res) => {
   try {
     const images = await db.Image.findAll();
@@ -43,14 +52,16 @@ app.get('/images', async (req, res) => {
   }
 });
 
+// usar archivos estaticos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
+// ver si esta corriendo
 app.get('/api/healthcheck', (req, res) => {
   res.json({ status: 'OK', message: 'API está funcionando' });
 });
 
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
