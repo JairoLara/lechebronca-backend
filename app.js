@@ -25,18 +25,27 @@ app.post('/images', upload.single('image'), async (req, res) => {
     const file = req.file;
     const { filename, fechaPublicacion } = req.body;
 
+    console.log('BODY:', req.body);
+    const parsedFecha = parseInt(fechaPublicacion, 10);
+    console.log('FECHA (raw):', fechaPublicacion, 'FECHA (parsed):', parsedFecha);
+
     if (!file || !filename || !fechaPublicacion) {
-    return res.status(400).json({ message: 'Faltan datos: imagen, nombre o fecha de publicación.' });
+      return res.status(400).json({ message: 'Faltan datos: imagen, nombre o fecha de publicación.' });
     }
 
-  const image = await db.Image.create({
-  filename,
-  filepath: `/uploads/${file.filename}`,
-  fechaPublicacion: parseInt(fechaPublicacion, 10)
-});
+    if (isNaN(parsedFecha) || parsedFecha < 1900 || parsedFecha > new Date().getFullYear() + 1) {
+      return res.status(400).json({ message: 'Fecha de publicación inválida' });
+    }
+
+    const image = await db.Image.create({
+      filename,
+      filepath: `/uploads/${file.filename}`,
+      fechaPublicacion: parsedFecha
+    });
 
     res.json(image);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 });

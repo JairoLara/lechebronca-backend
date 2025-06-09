@@ -1,21 +1,29 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Image extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      // agreagar asos.
     }
   }
   Image.init({
-    filename: DataTypes.STRING,
-    filepath: DataTypes.STRING
+    filename: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    filepath: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    fechaPublicacion: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        isInt: true,
+        min: 1900,
+        max: new Date().getFullYear() + 1
+      }
+    }
   }, {
     sequelize,
     modelName: 'Image',
