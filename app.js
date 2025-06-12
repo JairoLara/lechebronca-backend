@@ -60,8 +60,33 @@ app.get('/images', async (req, res) => {
   }
 });
 
-// Ruta para acceder a los archivos subidos
+// Ruta para fotos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// admin
+app.post('/admin/entrar', async (req, res) => {
+  const { codigo } = req.body;
+  if (!codigo) return res.status(400).json({ mensaje: 'Código requerido', acceso: false });
+
+  try {
+    let admin = await db.Admin.findOne();
+
+    if (!admin) {
+      await db.Admin.create({ codigo });
+      return res.json({ mensaje: 'Código guardado exitosamente', acceso: true });
+    }
+
+    if (admin.codigo === codigo) {
+      return res.json({ mensaje: 'Acceso concedido', acceso: true });
+    } else {
+      return res.status(401).json({ mensaje: 'Código incorrecto', acceso: false });
+    }
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error del servidor', acceso: false });
+  }
+});
 
 // Ruta de prueba
 app.get('/api/healthcheck', (req, res) => {
