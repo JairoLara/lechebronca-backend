@@ -11,6 +11,7 @@ app.use(cors({
   credentials: false
 }));
 
+app.use(express.json());
 const app = express();
 app.use(cors());
 app.use(express.json());
