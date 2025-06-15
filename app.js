@@ -1,8 +1,8 @@
 const express = require('express');
-const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const db = require('./models');
+const app = express();
 
 const cors = require('cors');
 app.use(cors({
@@ -11,8 +11,6 @@ app.use(cors({
   credentials: false
 }));
 
-app.use(express.json());
-const app = express();
 app.use(express.json());
 
 // Almacenar archivos
