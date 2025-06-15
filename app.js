@@ -5,10 +5,17 @@ const db = require('./models');
 const app = express();
 
 const cors = require('cors');
+const allowedOrigins = ['https://lechebronca.com', 'http://localhost:5173'];
 app.use(cors({
-  origin: ['https://lechebronca.com'], // o '*' si estás en pruebas
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
   methods: ['GET', 'POST'],
-  credentials: false
+  credentials: false 
 }));
 
 app.use(express.json());
