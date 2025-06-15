@@ -4,6 +4,13 @@ const multer = require('multer');
 const path = require('path');
 const db = require('./models');
 
+const cors = require('cors');
+app.use(cors({
+  origin: ['https://lechebronca.com'], // o '*' si estás en pruebas
+  methods: ['GET', 'POST'],
+  credentials: false
+}));
+
 const app = express();
 app.use(cors());
 app.use(express.json());
