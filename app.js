@@ -80,9 +80,11 @@ app.get('/images/:id', async (req, res) => {
     }
     res.json(image);
   } catch (err) {
+    console.error('Error al obtener la imagen por ID:', err); // 🔍 Log para debug
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 // Ruta para fotos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
