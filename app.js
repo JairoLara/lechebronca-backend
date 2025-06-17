@@ -4,6 +4,7 @@ const path = require('path');
 const db = require('./models');
 const app = express();
 
+
 const cors = require('cors');
 const allowedOrigins = ['https://lechebronca.com', 'http://localhost:5173'];
 app.use(cors({
@@ -74,14 +75,14 @@ app.get('/images', async (req, res) => {
 
 app.get('/images/:id', async (req, res) => {
   try {
-    const image = await Image.findByPk(req.params.id);
+    const image = await db.Image.findByPk(req.params.id);
     if (!image) {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }
-    res.json(image);
-  } catch (err) {
-    console.error('Error al obtener la imagen por ID:', err); // 🔍 Log para debug
-    res.status(500).json({ error: 'Error interno del servidor' });
+    return res.json(image);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
