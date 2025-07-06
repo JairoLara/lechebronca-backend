@@ -89,6 +89,38 @@ app.get('/images/:id', async (req, res) => {
 // Ruta para fotos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// comentarios
+app.get('/images/:id/comments', async (req, res) => {
+  try {
+    const comentarios = await db.Comment.findAll({ where: { imageId: req.params.id } });
+    res.json(comentarios);
+  } catch (error) {
+    console.error('GET /images/:id/comments →', error.message);
+    console.error(error.stack);
+    res.status(500).json({ error: 'Error al obtener comentarios' });
+  }
+});
+
+// Crear nuevo comentario
+app.post('/images/:id/comments', async (req, res) => {
+  try {
+    const { content } = req.body;
+    const imageId = req.params.id;
+
+    if (!content || !imageId) {
+      return res.status(400).json({ error: 'Faltan datos para crear comentario' });
+    }
+
+    const newComment = await db.Comment.create({ content, imageId });
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error('Error al crear comentario:', error.message);
+    console.error(error.stack);
+    res.status(500).json({ error: 'Error al crear comentario' });
+  }
+});
+
 // admin
 app.post('/admin/entrar', async (req, res) => {
   const { codigo } = req.body;
