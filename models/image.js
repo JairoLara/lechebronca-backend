@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Image extends Model {
     static associate(models) {
       // agreagar asos.
-      Image.hasMany(models.Comment, { foreignKey: 'imageId' });
+      Image.hasMany(models.Comment, { foreignKey: 'imageId',onDelete: 'CASCADE',hooks: true});
     }
   }
   Image.init({

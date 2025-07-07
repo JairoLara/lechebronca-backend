@@ -89,10 +89,20 @@ app.get('/images/:id', async (req, res) => {
 });
 
 app.delete('/images/:id', async (req, res) => {
-  const { id } = req.params
-  await Image.destroy({ where: { id } })
-  res.json({ mensaje: 'Proyecto eliminado correctamente' })
-})
+  const { id } = req.params;
+  try {
+    const deletedCount = await db.Image.destroy({ where: { id } });
+
+    if (deletedCount === 0) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+
+    res.json({ mensaje: 'Proyecto eliminado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al eliminar el proyecto' });
+  }
+});
 // Ruta para fotos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
