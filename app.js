@@ -38,14 +38,13 @@ const upload = multer({ storage });
 app.post('/images', upload.single('image'), async (req, res) => {
   try {
     const file = req.file;
-    const { filename, fechaPublicacion } = req.body;
+    const { filename, fechaPublicacion, mesPublicacion } = req.body;
 
     console.log('BODY:', req.body);
     const parsedFecha = parseInt(fechaPublicacion, 10);
-    console.log('FECHA (raw):', fechaPublicacion, 'FECHA (parsed):', parsedFecha);
 
-    if (!file || !filename || !fechaPublicacion) {
-      return res.status(400).json({ message: 'Faltan datos: imagen, nombre o fecha de publicación.' });
+    if (!file || !filename || !fechaPublicacion || !mesPublicacion) {
+      return res.status(400).json({ message: 'Faltan datos: imagen, nombre, fecha o mes de publicación.' });
     }
 
     if (isNaN(parsedFecha) || parsedFecha < 1900 || parsedFecha > new Date().getFullYear() + 1) {
@@ -55,7 +54,8 @@ app.post('/images', upload.single('image'), async (req, res) => {
     const image = await db.Image.create({
       filename,
       filepath: `/uploads/${file.filename}`,
-      fechaPublicacion: parsedFecha
+      fechaPublicacion: parsedFecha,
+      mesPublicacion // ← nuevo campo guardado
     });
 
     res.json(image);
@@ -64,6 +64,7 @@ app.post('/images', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Obtener imágenes
 app.get('/images', async (req, res) => {

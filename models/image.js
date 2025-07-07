@@ -24,7 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         min: 1900,
         max: new Date().getFullYear() + 1
       }
-    }
+    },
+    mesPublicacion: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }, 
   }, {
     sequelize,
     modelName: 'Image',
