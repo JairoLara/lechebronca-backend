@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      mesPublicaion: {
+      mesPublicacion: {
         type: Sequelize.STRING,
         allowNull: false
       },
