@@ -86,6 +86,11 @@ app.get('/images/:id', async (req, res) => {
   }
 });
 
+app.delete('/images/:id', async (req, res) => {
+  const { id } = req.params
+  await Image.destroy({ where: { id } })
+  res.json({ mensaje: 'Proyecto eliminado correctamente' })
+})
 // Ruta para fotos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
