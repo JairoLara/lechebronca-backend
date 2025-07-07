@@ -15,9 +15,11 @@ app.use(cors({
       callback(new Error('No permitido por CORS'));
     }
   },
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   credentials: false 
 }));
+
+app.options(/^\/.*$/, cors());
 
 app.use(express.json());
 
