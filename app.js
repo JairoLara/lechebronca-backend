@@ -139,6 +139,45 @@ app.post('/images/:id/comments', async (req, res) => {
   }
 });
 
+// publicar articulos
+app.post('/articles', async (req, res) => {
+  try {
+    const { titulo, texto, fechaPublicacion } = req.body;
+
+    console.log('BODY:', req.body);
+    const parsedFecha = parseInt(fechaPublicacion, 10);
+
+    if (!titulo || !texto || !fechaPublicacion) {
+      return res.status(400).json({ message: 'Faltan datos: título, texto o fecha de publicación.' });
+    }
+
+    if (isNaN(parsedFecha) || parsedFecha < 1900 || parsedFecha > new Date().getFullYear() + 1) {
+      return res.status(400).json({ message: 'Fecha de publicación inválida' });
+    }
+
+    const article = await db.Article.create({
+      titulo,
+      texto,
+      fechaPublicacion: parsedFecha
+    });
+
+    res.status(201).json(article);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ver articulos
+app.get('/articles', async (req, res) => {
+  try {
+    const articles = await db.Article.findAll();
+    res.json(articles);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // admin
 app.post('/admin/entrar', async (req, res) => {
   const { codigo } = req.body;
