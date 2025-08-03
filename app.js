@@ -178,6 +178,20 @@ app.get('/articles', async (req, res) => {
   }
 });
 
+app.get('/articles/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const article = await db.Article.findByPk(id);
+
+    if (!article) {
+      return res.status(404).json({ error: 'Artículo no encontrado' });
+    }
+
+    res.json(article);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // admin
 app.post('/admin/entrar', async (req, res) => {
   const { codigo } = req.body;
