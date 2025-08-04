@@ -22,6 +22,28 @@ app.use(cors({
 app.options(/^\/.*$/, cors());
 
 app.use(express.json());
+//validar codigo
+app.post('/admin/validar-codigo', async (req, res) => {
+  const { codigo } = req.body;
+
+  if (!codigo) {
+    return res.status(400).json({ acceso: false, mensaje: 'Código requerido' });
+  }
+
+  try {
+    // Busca en la tabla admins si existe el código
+    const admin = await db.Admin.findOne({ where: { codigo } });
+
+    if (admin) {
+      return res.json({ acceso: true, mensaje: 'Código válido' });
+    } else {
+      return res.status(401).json({ acceso: false, mensaje: 'Código incorrecto' });
+    }
+  } catch (error) {
+    console.error('Error en validar código:', error);
+    return res.status(500).json({ acceso: false, mensaje: 'Error interno del servidor' });
+  }
+});
 
 // Almacenar archivos
 const storage = multer.diskStorage({
