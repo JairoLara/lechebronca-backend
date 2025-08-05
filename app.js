@@ -214,6 +214,24 @@ app.get('/articles/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// eliminar articulos
+app.delete('/articles/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedCount = await db.Article.destroy({ where: { id } });
+
+    if (deletedCount === 0) {
+      return res.status(404).json({ error: 'Articulo no encontrado' });
+    }
+
+    res.json({ mensaje: 'Articulo eliminado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al eliminar el articulo' });
+  }
+});
+
 // admin
 app.post('/admin/entrar', async (req, res) => {
   const { codigo } = req.body;
