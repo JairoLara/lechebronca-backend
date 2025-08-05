@@ -257,7 +257,7 @@ app.post('/admin/entrar', async (req, res) => {
   }
 });
 
-// Ruta de prueba
+// Ruta de prueb
 app.get('/api/healthcheck', (req, res) => {
   res.json({ status: 'OK', message: 'API esta funcionando' });
 });
